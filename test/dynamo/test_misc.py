@@ -19,6 +19,7 @@ import torch
 
 import torch._dynamo.test_case
 import torch._dynamo.testing
+from torch._dynamo.utils import ifdyn
 import torch.onnx.operators
 from torch._dynamo import bytecode_transformation, graph_break
 from torch._dynamo.output_graph import OutputGraph
@@ -474,7 +475,7 @@ class MiscTests(torch._dynamo.test_case.TestCase):
         opt_fn = torch._dynamo.optimize((cnts))(fn)
         self.assertEqual(opt_fn(v1, v2), correct)
         self.assertEqual(cnts.frame_count, 1)
-        self.assertEqual(cnts.op_count, 2)
+        self.assertEqual(cnts.op_count, ifdyn(3, 2))
 
     def test_namedtuple1(self):
         def fn(a, b):
